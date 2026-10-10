@@ -621,6 +621,31 @@
                         }
                     }
 
+                    // Nếu đến từ Desktop (.exe)
+                    if (platform === 'desktop') {
+                        try {
+                            fetch(`http://127.0.0.1:14128/auth-callback?uid=${user.uid}&email=${emailParam}&name=${nameParam}&photo=${photoParam}&token=${token}&role=${profile.role || 'user'}`).catch(() => {});
+                        } catch(e) {}
+
+                        document.body.innerHTML = `
+                            <div style="display:flex; justify-content:center; align-items:center; min-height:100vh; background:#070b13; color:#f8fafc; font-family:Nunito, sans-serif; text-align:center; flex-direction:column; padding:24px; box-sizing:border-box;">
+                                <div style="width: 76px; height: 76px; border-radius: 50%; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 20px; border: 2px solid #38bdf8; box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);">💻</div>
+                                <h1 style="margin: 0 0 10px 0; font-size: 26px; font-weight: 800; color: #38bdf8;">Đăng Nhập Thành Công!</h1>
+                                <p style="font-size: 15px; color: #94a3b8; max-width: 380px; line-height: 1.6; margin-bottom: 25px;">Hệ thống đang tự động đồng bộ tài khoản vào ứng dụng <strong>MHEnt. Study Desktop</strong>...</p>
+                                <a href="${deepLink}" id="btn-open-desktop" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; padding: 14px 28px; border-radius: 9999px; font-weight: 800; text-decoration: none; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.4); font-size: 16px;">
+                                    💻 Mở MHEnt. Study (Desktop)
+                                </a>
+                                <p style="opacity: 0.6; font-size: 13px; margin-top: 20px;">Bạn có thể đóng tab trình duyệt này sau khi ứng dụng được kích hoạt.</p>
+                            </div>
+                        `;
+                        window.location.href = deepLink;
+                        setTimeout(() => {
+                            const btn = document.getElementById('btn-open-desktop');
+                            if (btn) btn.click();
+                        }, 400);
+                        return;
+                    }
+
                     // Nếu chắc chắn duyệt Web trên máy tính (hoặc platform === 'web'):
                     const isDefiniteWeb = platform === 'web' || (!isMobileOrApp() && platform !== 'app');
 
@@ -743,7 +768,8 @@
             if (user) {
                 const source = getLoginSource();
                 const pending = isPendingRedirect();
-                if (pending || source === 'mhentstudy' || source === 'study' || source === 'app') {
+                const redirectParam = getLoginRedirect();
+                if (pending || source === 'mhentstudy' || source === 'study' || source === 'app' || redirectParam) {
                     await handleLoginSuccess(user);
                 }
             }
