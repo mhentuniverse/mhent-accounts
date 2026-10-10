@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <!-- Kiểm tra Dark Mode ngay lập tức trước khi Render để tránh chớp trắng (Anti-FOUC) -->
+    <script>
+        (function() {
+            function getCookie(name) {
+                const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+                return match ? decodeURIComponent(match[3]) : null;
+            }
+            const saved = localStorage.getItem('mhent_dark_mode') || getCookie('mhent_dark_mode');
+            const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (saved === 'on' || (!saved && systemDark)) {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng Định Danh - MHEnt ID</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/icon-web.png">
+    
+    <!-- HỆ THỐNG CSS CHÍNH MHENT UNIVERSE -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/mhent-ui.css">
+    <link rel="stylesheet" href="/css/mhent-mobile.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/config.js"></script>
+
+    <style>
+        :root {
+            --auth-accent: #0284c7;
+            --auth-accent-glow: rgba(2, 132, 199, 0.35);
+            --auth-bg-grad: radial-gradient(circle at 50% 10%, #1e293b 0%, #070b13 100%);
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--auth-bg-grad);
+            font-family: 'Nunito', sans-serif;
+            color: #f8fafc;
+        }
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            box-sizing: border-box;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            padding: 36px 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 40px var(--auth-accent-glow);
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .auth-logo-badge {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 2px solid #38bdf8;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+            margin-bottom: 14px;
+            object-fit: cover;
+        }
+        .auth-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #38bdf8;
+            margin: 0 0 6px 0;
+            letter-spacing: 0.5px;
+        }
+        .auth-subtitle {
+            font-size: 13.5px;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin: 0 0 22px 0;
+            font-weight: 600;
+        }
+        .btn-google-sso {
+            width: 100%;
+            padding: 13px 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #ffffff;
+            color: #1e293b;
+            font-weight: 800;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Nunito', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        .btn-google-sso:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+            background: #f8fafc;
+        }
+        .auth-separator {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #64748b;
+            font-size: 12.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .auth-separator::before, .auth-separator::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .auth-separator span {
+            padding: 0 12px;
+        }
+        .auth-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .auth-tab-btn {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            font-weight: 800;
+            font-size: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .auth-tab-btn.active {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 2px 10px rgba(2, 132, 199, 0.4);
+        }
+        .auth-form-content {
+            display: none;
+            text-align: left;
+        }
+        .auth-form-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #cbd5e1;
+            margin-bottom: 6px;
+        }
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.6);
+            color: #ffffff;
+            font-size: 14.5px;
+            font-family: 'Nunito', sans-serif;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.2s;
+        }
+        .auth-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+            background: rgba(15, 23, 42, 0.9);
+        }
+        .btn-toggle-eye {
+            position: absolute;
+            right: 14px;
+            color: #64748b;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-toggle-eye:hover {
+            color: #38bdf8;
+        }
+        .btn-submit-auth {
+            width: 100%;
+            padding: 13px;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Nunito', sans-serif;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.35);
+            margin-top: 6px;
+        }
+        .btn-submit-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.5);
+        }
+        .btn-forgot-link {
+            display: inline-block;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #38bdf8;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: -6px;
+            margin-bottom: 12px;
+            text-align: right;
+            width: 100%;
+        }
+        .btn-forgot-link:hover {
+            text-decoration: underline;
+        }
+        .auth-footer-badge {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        .popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px);
+            z-index: 10000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
+            box-sizing: border-box;
+        }
+        .spinner-loader {
+            width: 52px; height: 52px;
+            border: 4px solid rgba(56, 189, 248, 0.2);
+            border-top: 4px solid #38bdf8;
+            border-radius: 50%;
+            animation: spinLoader 0.8s linear infinite;
+        }
+        @keyframes spinLoader {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay" class="popup-overlay" style="display: none;">
+        <div class="spinner-loader"></div>
+        <h2 id="loading-text" style="color: #38bdf8; margin-top: 20px; font-weight: 800; text-align: center; font-size: 19px;">Đang kết nối mây...</h2>
+        <button type="button" onclick="hideLoading()" style="margin-top: 18px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #94a3b8; padding: 7px 20px; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer;">
+            <i class="fa-solid fa-xmark"></i> Hủy thao tác
+        </button>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <img src="/assets/avt-web.jpg" alt="MHEnt Logo" class="auth-logo-badge">
+            <h1 class="auth-title">CỔNG ĐỊNH DANH</h1>
+            <p class="auth-subtitle">Hộ chiếu đa vũ trụ duy nhất cho toàn bộ hệ sinh thái MHEnt Universe</p>
+
+            <!-- GOOGLE SSO CHÍNH THỨC -->
+            <button id="btn-login-google" class="btn-google-sso" type="button">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                Tiếp tục với Google
+            </button>
+
+            <div class="auth-separator">
+                <span>Hoặc dùng Email</span>
+            </div>
+
+            <!-- TABS -->
+            <div class="auth-tabs">
+                <button id="btn-tab-login" class="auth-tab-btn active" onclick="switchTab('login')">Đăng Nhập</button>
+                <button id="btn-tab-register" class="auth-tab-btn" onclick="switchTab('register')">Đăng Ký Mới</button>
+            </div>
+
+            <!-- FORM ĐĂNG NHẬP -->
+            <div id="tab-login" class="auth-form-content active">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Địa chỉ Email</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="login-email" class="auth-input" placeholder="tenban@mhentuniverse.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Mật khẩu</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="login-password" class="auth-input" placeholder="Nhập mật khẩu..." required>
+                        <i class="fa-solid fa-eye btn-toggle-eye" onclick="togglePassword('login-password', this)"></i>
+                    </div>
+                </div>
+                <a href="#" onclick="forgotPassword(); return false;" class="btn-forgot-link">Quên mật khẩu?</a>
+                <button id="btn-login-email" class="btn-submit-auth">
+                    <i class="fa-solid fa-right-to-bracket" style="margin-right: 6px;"></i> Đăng Nhập
+                </button>
+            </div>
+
+            <!-- FORM ĐĂNG KÝ -->
+            <div id="tab-register" class="auth-form-content">
+                <div class="form-group">
+                    <label class="form-label" for="reg-email">Email đăng ký</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="reg-email" class="auth-input" placeholder="Địa chỉ email cá nhân..." required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="reg-password">Tạo mật khẩu</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="reg-password" class="auth-input" placeholder="Tối thiểu 6 ký tự..." required>
+                        <i class="fa-solid fa-eye btn-toggle-eye" onclick="togglePassword('reg-password', this)"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="reg-confirm-password">Xác nhận mật khẩu</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="reg-confirm-password" class="auth-input" placeholder="Nhập lại mật khẩu..." required>
+                        <i class="fa-solid fa-eye btn-toggle-eye" onclick="togglePassword('reg-confirm-password', this)"></i>
+                    </div>
+                </div>
+                <button id="btn-register-email" class="btn-submit-auth">
+                    <i class="fa-solid fa-user-plus" style="margin-right: 6px;"></i> Tạo Tài Khoản MHEnt ID
+                </button>
+            </div>
+
+            <div class="auth-footer-badge">
+                © 2026 <strong>Miyazaki Haruto Entertainment Co., Ltd.</strong><br>
+                Bảo vệ bởi hệ thống SSO liên tên miền chuẩn quốc tế.
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE MODULE & SSO ENGINE -->
+    <script type="module">
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithPopup, 
+            signInWithRedirect, 
+            getRedirectResult, 
+            GoogleAuthProvider, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            sendPasswordResetEmail,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = window.firebaseConfig;
+        const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({
+            prompt: 'select_account'
+        });
+
+        // ==========================================
+        // QUẢN LÝ THAM SỐ SSO TOÀN HỆ THỐNG
+        // ==========================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramSource = urlParams.get('source');
+        const paramPlatform = urlParams.get('platform');
+        const paramRedirect = urlParams.get('redirect');
+
+        if (paramSource) {
+            try {
+                sessionStorage.setItem('mhent_login_source', paramSource);
+                localStorage.setItem('mhent_login_source', paramSource);
+            } catch(e) {}
+        }
+        if (paramPlatform) {
+            try {
+                sessionStorage.setItem('mhent_login_platform', paramPlatform);
+                localStorage.setItem('mhent_login_platform', paramPlatform);
+            } catch(e) {}
+        }
+        if (paramRedirect) {
+            try {
+                sessionStorage.setItem('mhent_login_redirect', paramRedirect);
+                localStorage.setItem('mhent_login_redirect', paramRedirect);
+            } catch(e) {}
+        }
+
+        function getLoginSource() {
+            return new URLSearchParams(window.location.search).get('source') || 
+                   sessionStorage.getItem('mhent_login_source') || 
+                   localStorage.getItem('mhent_login_source') || '';
+        }
+        function getLoginPlatform() {
+            return new URLSearchParams(window.location.search).get('platform') || 
+                   sessionStorage.getItem('mhent_login_platform') || 
+                   localStorage.getItem('mhent_login_platform') || '';
+        }
+        function getLoginRedirect() {
+            return new URLSearchParams(window.location.search).get('redirect') || 
+                   sessionStorage.getItem('mhent_login_redirect') || 
+                   localStorage.getItem('mhent_login_redirect') || '';
+        }
+
+        function clearLoginSession() {
+            try { sessionStorage.removeItem('mhent_login_source'); } catch(e) {}
+            try { localStorage.removeItem('mhent_login_source'); } catch(e) {}
+            try { sessionStorage.removeItem('mhent_login_platform'); } catch(e) {}
+            try { localStorage.removeItem('mhent_login_platform'); } catch(e) {}
+            try { sessionStorage.removeItem('mhent_login_redirect'); } catch(e) {}
+            try { localStorage.removeItem('mhent_login_redirect'); } catch(e) {}
+            try { sessionStorage.removeItem('mhent_auth_pending_redirect'); } catch(e) {}
+            try { localStorage.removeItem('mhent_auth_pending_redirect'); } catch(e) {}
+            try { sessionStorage.removeItem('mhent_auto_google_done'); } catch(e) {}
+        }
+
+        function setPendingRedirect() {
+            try { sessionStorage.setItem('mhent_auth_pending_redirect', 'true'); } catch(e) {}
+            try { localStorage.setItem('mhent_auth_pending_redirect', 'true'); } catch(e) {}
+        }
+
+        function isPendingRedirect() {
+            return sessionStorage.getItem('mhent_auth_pending_redirect') === 'true' || 
+                   localStorage.getItem('mhent_auth_pending_redirect') === 'true';
+        }
+
+        function isMobileOrApp() {
+            const ua = navigator.userAgent || '';
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 768);
+            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+            return isTouch || isMobileUA;
+        }
+
+        function getSafeRedirectUrl(target) {
+            if (!target) return '';
+            try {
+                const url = new URL(target, window.location.origin);
+                const isAllowed = url.hostname === 'mhentuniverse.com' || 
+                                  url.hostname.endsWith('.mhentuniverse.com');
+                if (!isAllowed) return '';
+                if (['/login', '/login.html'].includes(url.pathname)) return '';
+                return url.href;
+            } catch(e) {
+                return '';
+            }
+        }
+
+        // ==========================================
+        // UI HELPERS (LOADING, TABS, PASSWORD)
+        // ==========================================
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+
+        window.showLoading = function(text) {
+            if (loadingText) loadingText.textContent = text || 'Đang xử lý...';
+            if (loadingOverlay) loadingOverlay.style.display = 'flex';
+        };
+        window.hideLoading = function() {
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+        };
+
+        window.switchTab = function(type) {
+            document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.auth-form-content').forEach(c => c.classList.remove('active'));
+            const tabBtn = document.getElementById(`btn-tab-${type}`);
+            const tabContent = document.getElementById(`tab-${type}`);
+            if (tabBtn) tabBtn.classList.add('active');
+            if (tabContent) tabContent.classList.add('active');
+        };
+
+        window.togglePassword = function(id, icon) {
+            const input = document.getElementById(id);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        };
+
+        window.forgotPassword = async function() {
+            const email = prompt("Nhập địa chỉ Email của bạn để nhận liên kết đặt lại mật khẩu:");
+            if (email && email.includes('@')) {
+                showLoading("Đang gửi thư đặt lại mật khẩu...");
+                try {
+                    await sendPasswordResetEmail(auth, email.trim());
+                    hideLoading();
+                    alert(`Đã gửi thư hướng dẫn đổi mật khẩu tới ${email}! Vui lòng kiểm tra hòm thư.`);
+                } catch(e) {
+                    hideLoading();
+                    alert("Lỗi: " + (e.message || "Không thể gửi email"));
+                }
+            }
+        };
+
+        // ==========================================
+        // BỘ NÃO ĐIỀU HƯỚNG ĐĂNG NHẬP THÀNH CÔNG (SSO)
+        // ==========================================
+        let isHandlingSuccess = false;
+        async function handleLoginSuccess(user) {
+            if (isHandlingSuccess) return;
+            isHandlingSuccess = true;
+            showLoading("Đang khởi tạo Hộ chiếu MHEnt ID...");
+
+            try {
+                const source = getLoginSource();
+                const platform = getLoginPlatform();
+                const redirectParam = getLoginRedirect();
+
+                // Đồng bộ hồ sơ Firestore (có timeout 2.5s phòng nghẽn mạng)
+                let uData = {};
+                try {
+                    const userRef = doc(db, "users", user.uid);
+                    const userSnap = await Promise.race([
+                        getDoc(userRef),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 2500))
+                    ]);
+                    if (userSnap && userSnap.exists()) {
+                        uData = userSnap.data();
+                    } else {
+                        uData = {
+                            email: user.email || "",
+                            displayName: user.displayName || (user.email ? user.email.split('@')[0] : 'Học viên MHEnt'),
+                            photoURL: user.photoURL || "/assets/avt-web.jpg",
+                            role: "user",
+                            streak: 1,
+                            createdAt: new Date().toISOString()
+                        };
+                        setDoc(userRef, uData, { merge: true }).catch(() => {});
+                    }
+                } catch(fsErr) {
+                    uData = {
+                        email: user.email || "",
+                        displayName: user.displayName || (user.email ? user.email.split('@')[0] : 'Học viên MHEnt'),
+                        photoURL: user.photoURL || "/assets/avt-web.jpg",
+                        role: "user",
+                        streak: 1
+                    };
+                }
+
+                let token = '';
+                try { token = await user.getIdToken(); } catch(e) {}
+
+                const profile = {
+                    uid: user.uid,
+                    email: user.email || "",
+                    displayName: user.displayName || (user.email ? user.email.split('@')[0] : 'Học viên MHEnt'),
+                    photoURL: user.photoURL || "/assets/avt-web.jpg",
+                    role: uData.role || "user",
+                    streak: uData.streak || 1
+                };
+
+                // Lưu LocalStorage tại Cổng Định Danh
+                localStorage.setItem('mhent_user_profile', JSON.stringify(profile));
+                localStorage.setItem('mhent_user_role', profile.role);
+                if (token) localStorage.setItem('mhent_app_token', token);
+
+                // 🌐 KÍCH HOẠT COOKIE LIÊN TÊN MIỀN *.mhentuniverse.com
+                try {
+                    const cookieVal = encodeURIComponent(JSON.stringify(profile));
+                    const secureFlag = window.location.protocol === 'https:' ? '; Secure' : '';
+                    document.cookie = `mhent_auth_session=${cookieVal}; domain=.mhentuniverse.com; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
+                    document.cookie = `mhent_auth_session=${cookieVal}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
+                    if (token) {
+                        document.cookie = `mhent_auth_token=${encodeURIComponent(token)}; domain=.mhentuniverse.com; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
+                        document.cookie = `mhent_auth_token=${encodeURIComponent(token)}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
+                    }
+                } catch(cErr) {
+                    console.warn("[MHEnt SSO] Lỗi lưu cookie:", cErr);
+                }
+
+                // 🎓 TRƯỜNG HỢP 1: TỪ MHENT STUDY (WEB HOẶC APP APK)
+                if (source === 'mhentstudy' || source === 'study') {
+                    clearLoginSession();
+
+                    const emailParam = encodeURIComponent(user.email || '');
+                    const nameParam = encodeURIComponent(profile.displayName);
+                    const photoParam = encodeURIComponent(profile.photoURL);
+                    const deepLink = `mhentstudy://auth?uid=${user.uid}&email=${emailParam}&name=${nameParam}&photo=${photoParam}&token=${token}`;
+
+                    let webStudyUrl = 'https://study.mhentuniverse.com';
+                    if (redirectParam) {
+                        if (redirectParam.startsWith('http')) {
+                            webStudyUrl = redirectParam;
+                        } else if (redirectParam.startsWith('/')) {
+                            webStudyUrl = 'https://study.mhentuniverse.com' + redirectParam;
+                        }
+                    }
+
+                    // Nếu chắc chắn duyệt Web trên máy tính (hoặc platform === 'web'):
+                    const isDefiniteWeb = platform === 'web' || (!isMobileOrApp() && platform !== 'app');
+
+                    if (isDefiniteWeb) {
+                        document.body.innerHTML = `
+                            <div style="display:flex; justify-content:center; align-items:center; min-height:100vh; background:#070b13; color:#f8fafc; font-family:Nunito, sans-serif; text-align:center; flex-direction:column; padding:24px; box-sizing:border-box;">
+                                <div style="width: 76px; height: 76px; border-radius: 50%; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 20px; border: 2px solid #38bdf8; box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);">🎓</div>
+                                <h1 style="margin: 0 0 10px 0; font-size: 26px; font-weight: 800; color: #38bdf8;">Đăng Nhập Thành Công!</h1>
+                                <p style="font-size: 15px; color: #94a3b8; max-width: 380px; line-height: 1.6; margin-bottom: 25px;">Hệ thống đang tự động đưa bạn quay lại <strong>MHEnt. Study Hub</strong>...</p>
+                                <a href="${webStudyUrl}" id="btn-return-web" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; padding: 14px 28px; border-radius: 9999px; font-weight: 800; text-decoration: none; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.4); font-size: 16px;">
+                                    🌐 Tiếp tục trên MHEnt. Study ngay
+                                </a>
+                            </div>
+                        `;
+                        setTimeout(() => {
+                            window.location.href = webStudyUrl;
+                        }, 500);
+                        return;
+                    }
+
+                    // Nếu từ App APK hoặc từ Thiết bị Di động (khi mở Chrome từ APK):
+                    document.body.innerHTML = `
+                        <div style="display:flex; justify-content:center; align-items:center; min-height:100vh; background:#070b13; color:#f8fafc; font-family:Nunito, sans-serif; text-align:center; flex-direction:column; padding:24px; box-sizing:border-box;">
+                            <div style="width: 76px; height: 76px; border-radius: 50%; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 20px; border: 2px solid #38bdf8; box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);">🎓</div>
+                            <h1 style="margin: 0 0 10px 0; font-size: 26px; font-weight: 800; color: #38bdf8;">Đăng Nhập Thành Công!</h1>
+                            <p style="font-size: 15px; color: #94a3b8; max-width: 380px; line-height: 1.6; margin-bottom: 25px;">Hệ thống đang tự động mở lại ứng dụng <strong>MHEnt. Study</strong>...</p>
+                            <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px;">
+                                <a href="${deepLink}" id="btn-open-app" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; padding: 14px 28px; border-radius: 9999px; font-weight: 800; text-decoration: none; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.4); font-size: 16px;">
+                                    🚀 Mở MHEnt. Study (App APK)
+                                </a>
+                                <a href="${webStudyUrl}" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #94a3b8; padding: 12px 24px; border-radius: 9999px; font-weight: 700; text-decoration: none; font-size: 14px;">
+                                    🌐 Hoặc tiếp tục trên Trình duyệt Web
+                                </a>
+                            </div>
+                            <p style="opacity: 0.6; font-size: 13px; margin-top: 25px;">(Nếu ứng dụng không tự mở trong 2 giây, hãy nhấn vào nút phía trên nha)</p>
+                        </div>
+                    `;
+
+                    window.location.href = deepLink;
+                    setTimeout(() => {
+                        const btn = document.getElementById('btn-open-app');
+                        if (btn) btn.click();
+                    }, 400);
+                    return;
+                }
+
+                // 📱 TRƯỜNG HỢP 2: TỪ APP MHENT UNIVERSE
+                if (source === 'app') {
+                    clearLoginSession();
+                    const deepLink = `mhent://auth?uid=${user.uid}&token=${token}`;
+                    document.body.innerHTML = `
+                        <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#ff85a2; color:white; font-family:Nunito, sans-serif; text-align:center; flex-direction:column; padding:20px; box-sizing:border-box;">
+                            <h1 style="font-size: 80px; margin: 0;">✅</h1>
+                            <h1 style="margin-top:10px;">🎉 Đăng nhập thành công!</h1>
+                            <p style="font-size:16px;">Hệ thống đang tự động mở lại App MHEnt Universe...</p>
+                            <a href="${deepLink}" style="margin-top:15px; color:white; font-weight:bold; text-decoration:underline;">Nhấn vào đây nếu app không tự mở</a>
+                        </div>
+                    `;
+                    window.location.href = deepLink;
+                    return;
+                }
+
+                // 🌐 TRƯỜNG HỢP 3: ĐĂNG NHẬP THÔNG THƯỜNG TRÊN WEB
+                clearLoginSession();
+                const safeDest = getSafeRedirectUrl(redirectParam) || getSafeRedirectUrl(document.referrer) || '/profile';
+                setTimeout(() => {
+                    window.location.href = safeDest;
+                }, 600);
+
+            } catch(err) {
+                console.error("[MHEnt SSO] Lỗi hoàn tất đăng nhập:", err);
+                const safeDest = getSafeRedirectUrl(getLoginRedirect()) || '/profile';
+                window.location.href = safeDest;
+            }
+        }
+
+        // ==========================================
+        // XỬ LÝ KẾT QUẢ GOOGLE REDIRECT
+        // ==========================================
+        async function checkRedirectAuthResult() {
+            const pending = isPendingRedirect();
+            const source = getLoginSource();
+            if (!pending && !source) return;
+
+            showLoading("Đang xác thực tài khoản Google...");
+
+            try {
+                const result = await getRedirectResult(auth);
+                if (result && result.user) {
+                    await handleLoginSuccess(result.user);
+                    return;
+                }
+            } catch(err) {
+                console.error("[MHEnt SSO] Lỗi Google Redirect:", err);
+            }
+
+            if (auth.currentUser) {
+                await handleLoginSuccess(auth.currentUser);
+                return;
+            }
+
+            let resolved = false;
+            const timer = setTimeout(() => {
+                if (!resolved) hideLoading();
+            }, 3500);
+
+            const unsubscribe = onAuthStateChanged(auth, async (user) => {
+                if (user && !resolved) {
+                    resolved = true;
+                    clearTimeout(timer);
+                    if (typeof unsubscribe === 'function') unsubscribe();
+                    await handleLoginSuccess(user);
+                }
+            });
+        }
+
+        checkRedirectAuthResult();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const source = getLoginSource();
+                const pending = isPendingRedirect();
+                if (pending || source === 'mhentstudy' || source === 'study' || source === 'app') {
+                    await handleLoginSuccess(user);
+                }
+            }
+        });
+
+        // ==========================================
+        // NÚT BẤM ĐĂNG NHẬP GOOGLE
+        // ==========================================
+        async function executeGoogleLogin() {
+            showLoading("Đang kết nối Google...");
+
+            try {
+                const result = await signInWithPopup(auth, provider);
+                await handleLoginSuccess(result.user);
+            } catch(error) {
+                console.warn("[Google Auth] Popup result:", error);
+
+                if (error.code === 'auth/popup-closed-by-user') {
+                    hideLoading();
+                    return;
+                }
+
+                // Fallback sang Redirect nếu popup bị chặn
+                const shouldRedirect = [
+                    'auth/popup-blocked',
+                    'auth/operation-not-supported-in-this-environment',
+                    'auth/cancelled-popup-request'
+                ].includes(error.code);
+
+                if (shouldRedirect) {
+                    try {
+                        setPendingRedirect();
+                        showLoading("Đang mở danh sách tài khoản Google...");
+                        await signInWithRedirect(auth, provider);
+                        return;
+                    } catch(redirErr) {
+                        hideLoading();
+                        alert("Không thể chuyển hướng đăng nhập Google!");
+                        return;
+                    }
+                }
+
+                hideLoading();
+                alert("Đăng nhập Google thất bại: " + (error.message || error.code));
+            }
+        }
+
+        const btnGoogle = document.getElementById('btn-login-google');
+        if (btnGoogle) {
+            btnGoogle.addEventListener('click', executeGoogleLogin);
+        }
+
+        // Tự động kích hoạt Google 1 lần nếu có cờ autoGoogle và không bị lặp
+        const isPending = isPendingRedirect();
+        if (urlParams.get('autoGoogle') === '1' && !isPending && !sessionStorage.getItem('mhent_auto_google_done')) {
+            try { sessionStorage.setItem('mhent_auto_google_done', 'true'); } catch(e) {}
+            try {
+                const cleanUrl = new URL(window.location.href);
+                cleanUrl.searchParams.delete('autoGoogle');
+                window.history.replaceState({}, '', cleanUrl.toString());
+            } catch(e) {}
+
+            showLoading("Đang mở danh sách tài khoản Google...");
+            setPendingRedirect();
+            setTimeout(() => {
+                signInWithRedirect(auth, provider).catch(() => hideLoading());
+            }, 200);
+        }
+
+        // ==========================================
+        // ĐĂNG NHẬP & ĐĂNG KÝ EMAIL
+        // ==========================================
+        const btnLoginEmail = document.getElementById('btn-login-email');
+        if (btnLoginEmail) {
+            btnLoginEmail.addEventListener('click', async () => {
+                const email = document.getElementById('login-email').value.trim();
+                const pass = document.getElementById('login-password').value.trim();
+                if (!email || !pass) return alert("Vui lòng điền đủ Email và Mật khẩu!");
+
+                showLoading("Đang kiểm tra thông tin...");
+                try {
+                    const cred = await signInWithEmailAndPassword(auth, email, pass);
+                    await handleLoginSuccess(cred.user);
+                } catch(e) {
+                    hideLoading();
+                    alert("Sai email hoặc mật khẩu rùi!");
+                }
+            });
+        }
+
+        const btnRegisterEmail = document.getElementById('btn-register-email');
+        if (btnRegisterEmail) {
+            btnRegisterEmail.addEventListener('click', async () => {
+                const email = document.getElementById('reg-email').value.trim();
+                const pass = document.getElementById('reg-password').value.trim();
+                const confirmPass = document.getElementById('reg-confirm-password').value.trim();
+
+                if (!email || !pass || !confirmPass) return alert("Vui lòng điền đủ thông tin!");
+                if (pass.length < 6) return alert("Mật khẩu ít nhất 6 ký tự nha!");
+                if (pass !== confirmPass) return alert("Hai mật khẩu không khớp nhau!");
+
+                showLoading("Đang tạo tài khoản MHEnt ID mới...");
+                try {
+                    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                    await handleLoginSuccess(cred.user);
+                } catch(e) {
+                    hideLoading();
+                    alert("Lỗi tạo tài khoản: " + (e.message || "Không thành công"));
+                }
+            });
+        }
+    </script>
+</body>
+</html>

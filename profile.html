@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <script>
+        (function() {
+            function getCookie(name) {
+                const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+                return match ? decodeURIComponent(match[3]) : null;
+            }
+            const saved = localStorage.getItem('mhent_dark_mode') || getCookie('mhent_dark_mode');
+            const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (saved === 'on' || (!saved && systemDark)) {
+                document.documentElement.classList.add('dark-mode');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+            }
+        })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ Cá Nhân - MHEnt ID</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/icon-web.png">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/mhent-ui.css">
+    <link rel="stylesheet" href="/css/mhent-mobile.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/config.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% 10%, #1e293b 0%, #070b13 100%);
+            font-family: 'Nunito', sans-serif;
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            box-sizing: border-box;
+        }
+        .profile-card {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            padding: 36px 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(56, 189, 248, 0.2);
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .avatar-wrap {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 16px auto;
+        }
+        .profile-avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+            object-fit: cover;
+        }
+        .profile-name {
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffffff;
+            margin: 0 0 4px 0;
+        }
+        .profile-email {
+            font-size: 14px;
+            color: #94a3b8;
+            margin: 0 0 16px 0;
+            font-weight: 600;
+        }
+        .badges-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 800;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        .portal-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 24px 0;
+            text-align: left;
+        }
+        .portal-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13.5px;
+            transition: 0.2s;
+        }
+        .portal-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #38bdf8;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            font-weight: 800;
+            font-size: 14.5px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Nunito', sans-serif;
+        }
+        .btn-logout:hover {
+            background: #ef4444;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="avatar-wrap">
+                <img id="user-avatar" src="/assets/avt-web.jpg" alt="Avatar" class="profile-avatar">
+            </div>
+            <h1 id="user-name" class="profile-name">Đang tải hồ sơ...</h1>
+            <p id="user-email" class="profile-email">vui lòng chờ trong giây lát</p>
+
+            <div class="badges-row">
+                <span class="pill-badge" id="badge-role">
+                    <i class="fa-solid fa-shield"></i> Thành viên MHEnt
+                </span>
+                <span class="pill-badge" id="badge-streak" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3);">
+                    🔥 <span id="streak-count">1</span> ngày liên tục
+                </span>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 18px;">
+                <p style="font-size: 13px; color: #94a3b8; margin: 0 0 12px 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Phân khu trực thuộc</p>
+                <div class="portal-links">
+                    <a href="https://study.mhentuniverse.com" class="portal-btn">
+                        <span style="font-size: 20px;">🌸</span>
+                        <div>
+                            <div>MHEnt Study</div>
+                            <div style="font-size: 11px; opacity: 0.7;">Học Ngoại Ngữ</div>
+                        </div>
+                    </a>
+                    <a href="https://www.mhentuniverse.com" class="portal-btn">
+                        <span style="font-size: 20px;">🎬</span>
+                        <div>
+                            <div>Đại Sảnh MHEnt</div>
+                            <div style="font-size: 11px; opacity: 0.7;">Cinema & Anime</div>
+                        </div>
+                    </a>
+                    <a href="https://www.mhentuniverse.com/arena" class="portal-btn">
+                        <span style="font-size: 20px;">⚔️</span>
+                        <div>
+                            <div>Arena Trực Tuyến</div>
+                            <div style="font-size: 11px; opacity: 0.7;">Đấu Trí MHEnt</div>
+                        </div>
+                    </a>
+                    <a href="https://www.mhentuniverse.com/game" class="portal-btn">
+                        <span style="font-size: 20px;">🎮</span>
+                        <div>
+                            <div>Game Center</div>
+                            <div style="font-size: 11px; opacity: 0.7;">Cờ Tướng, Cờ Vua</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <button id="btn-logout" class="btn-logout" type="button">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất Khỏi MHEnt ID
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const app = !getApps().length ? initializeApp(window.firebaseConfig) : getApp();
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function getCookie(name) {
+            const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+            return match ? decodeURIComponent(match[3]) : null;
+        }
+
+        function renderProfile(userObj) {
+            if (!userObj) return;
+            const nameEl = document.getElementById('user-name');
+            const emailEl = document.getElementById('user-email');
+            const avtEl = document.getElementById('user-avatar');
+            const roleEl = document.getElementById('badge-role');
+            const streakEl = document.getElementById('streak-count');
+
+            if (nameEl) nameEl.textContent = userObj.displayName || (userObj.email ? userObj.email.split('@')[0] : 'Học viên MHEnt');
+            if (emailEl) emailEl.textContent = userObj.email || '';
+            if (avtEl) avtEl.src = userObj.photoURL || '/assets/avt-web.jpg';
+            if (streakEl) streakEl.textContent = userObj.streak || 1;
+            if (roleEl && userObj.role) {
+                roleEl.innerHTML = `<i class="fa-solid fa-shield"></i> ${userObj.role.toUpperCase()}`;
+            }
+        }
+
+        // Khôi phục ngay từ bộ nhớ đệm hoặc Cookie
+        const sessionCookie = getCookie('mhent_auth_session');
+        const cached = localStorage.getItem('mhent_user_profile');
+        let currentProfile = null;
+
+        if (sessionCookie) {
+            try { currentProfile = JSON.parse(sessionCookie); } catch(e){}
+        } else if (cached) {
+            try { currentProfile = JSON.parse(cached); } catch(e){}
+        }
+
+        if (currentProfile) {
+            renderProfile(currentProfile);
+        }
+
+        // Lắng nghe Firebase Auth
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const snap = await getDoc(doc(db, "users", user.uid));
+                    const data = snap.exists() ? snap.data() : {};
+                    const updated = {
+                        uid: user.uid,
+                        email: user.email || '',
+                        displayName: user.displayName || data.displayName || user.email.split('@')[0],
+                        photoURL: user.photoURL || data.photoURL || '/assets/avt-web.jpg',
+                        role: data.role || 'user',
+                        streak: data.streak || 1
+                    };
+                    renderProfile(updated);
+                    localStorage.setItem('mhent_user_profile', JSON.stringify(updated));
+                } catch(e) {}
+            } else if (!currentProfile) {
+                // Không có phiên đăng nhập -> Chuyển về login
+                window.location.replace('/login');
+            }
+        });
+
+        // Xử lý đăng xuất
+        document.getElementById('btn-logout').addEventListener('click', async () => {
+            if (!confirm("Bạn có chắc chắn muốn đăng xuất khỏi Cổng Định Danh MHEnt ID?")) return;
+            try {
+                await signOut(auth);
+            } catch(e) {}
+
+            localStorage.removeItem('mhent_user_profile');
+            localStorage.removeItem('mhent_user_role');
+            localStorage.removeItem('mhent_app_token');
+
+            // Xóa cookie toàn hệ thống .mhentuniverse.com
+            document.cookie = "mhent_auth_session=; domain=.mhentuniverse.com; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+            document.cookie = "mhent_auth_token=; domain=.mhentuniverse.com; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+            document.cookie = "mhent_auth_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+            document.cookie = "mhent_auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure";
+
+            window.location.href = '/login';
+        });
+    </script>
+</body>
+</html>

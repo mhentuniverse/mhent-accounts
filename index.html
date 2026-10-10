@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cổng Định Danh - MHEnt ID</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/icon-web.png">
+    <script>
+        (function() {
+            function getCookie(name) {
+                const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+                return match ? decodeURIComponent(match[3]) : null;
+            }
+            
+            const sessionCookie = getCookie('mhent_auth_session');
+            const cachedProfile = localStorage.getItem('mhent_user_profile');
+            const search = window.location.search || '';
+
+            // Nếu đã có phiên đăng nhập hợp lệ
+            if (sessionCookie || cachedProfile) {
+                const urlParams = new URLSearchParams(search);
+                const redirect = urlParams.get('redirect');
+                if (redirect) {
+                    window.location.replace(redirect);
+                } else {
+                    window.location.replace('/profile' + search);
+                }
+            } else {
+                // Chưa đăng nhập: Chuyển ngay sang /login
+                window.location.replace('/login' + search);
+            }
+        })();
+    </script>
+</head>
+<body style="background: #0f172a; color: #f8fafc; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+    <p>Đang kết nối Cổng Định Danh MHEnt ID...</p>
+</body>
+</html>
