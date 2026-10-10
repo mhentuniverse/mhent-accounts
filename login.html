@@ -607,11 +607,6 @@
                 if (source === 'mhentstudy' || source === 'study') {
                     clearLoginSession();
 
-                    const emailParam = encodeURIComponent(user.email || '');
-                    const nameParam = encodeURIComponent(profile.displayName);
-                    const photoParam = encodeURIComponent(profile.photoURL);
-                    const deepLink = `mhentstudy://auth?uid=${user.uid}&email=${emailParam}&name=${nameParam}&photo=${photoParam}&token=${token}`;
-
                     let webStudyUrl = 'https://study.mhentuniverse.com';
                     if (redirectParam) {
                         if (redirectParam.startsWith('http')) {
@@ -620,6 +615,12 @@
                             webStudyUrl = 'https://study.mhentuniverse.com' + redirectParam;
                         }
                     }
+
+                    const emailParam = encodeURIComponent(user.email || '');
+                    const nameParam = encodeURIComponent(profile.displayName);
+                    const photoParam = encodeURIComponent(profile.photoURL);
+                    const redirectUrlParam = encodeURIComponent(webStudyUrl);
+                    const deepLink = `mhentstudy://auth?uid=${user.uid}&email=${emailParam}&name=${nameParam}&photo=${photoParam}&token=${token}&redirect=${redirectUrlParam}`;
 
                     // Nếu đến từ Desktop (.exe)
                     if (platform === 'desktop') {
