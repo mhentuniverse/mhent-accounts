@@ -581,7 +581,13 @@
                     displayName: user.displayName || (user.email ? user.email.split('@')[0] : 'Học viên MHEnt'),
                     photoURL: user.photoURL || "/assets/avt-web.jpg",
                     role: uData.role || "user",
-                    streak: uData.streak || 1
+                    streak: uData.streak || 1,
+                    teamCinema: uData.teamCinema || uData.teamName || '',
+                    teamArena: uData.teamArena || uData.teamName || '',
+                    teamManga: uData.teamManga || uData.teamName || '',
+                    teamMusic: uData.teamMusic || uData.teamName || '',
+                    teamNovel: uData.teamNovel || uData.teamName || '',
+                    teamEdu: uData.teamEdu || uData.teamTeach || uData.teamName || ''
                 };
 
                 // Lưu LocalStorage tại Cổng Định Danh

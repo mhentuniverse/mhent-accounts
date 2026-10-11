@@ -600,7 +600,13 @@
                         displayName: user.displayName || data.displayName || user.email.split('@')[0],
                         photoURL: user.photoURL || data.photoURL || '/assets/avt-web.jpg',
                         role: data.role || 'user',
-                        provider: providerId.includes('google') ? 'Google Account' : 'Email & Mật khẩu'
+                        provider: providerId.includes('google') ? 'Google Account' : 'Email & Mật khẩu',
+                        teamCinema: data.teamCinema || data.teamName || '',
+                        teamArena: data.teamArena || data.teamName || '',
+                        teamManga: data.teamManga || data.teamName || '',
+                        teamMusic: data.teamMusic || data.teamName || '',
+                        teamNovel: data.teamNovel || data.teamName || '',
+                        teamEdu: data.teamEdu || data.teamTeach || data.teamName || ''
                     };
                     renderProfile(updated);
                     localStorage.setItem('mhent_user_profile', JSON.stringify(updated));
