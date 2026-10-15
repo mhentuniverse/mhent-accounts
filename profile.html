@@ -693,10 +693,24 @@
             if (!email) return window.showToast("Lỗi", "Không tìm thấy địa chỉ email của tài khoản!", "error");
 
             try {
-                await sendPasswordResetEmail(auth, email);
-                window.showToast("Đã Gửi Thư", `Đã gửi thư đặt lại mật khẩu đến hộp thư ${email}!`, "success");
+                const res = await fetch('https://mhentuniverse.com/api/auth-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email.trim(), type: 'resetPassword' })
+                });
+                const data = await res.json();
+                if (res.ok && data.status === 'success') {
+                    window.showToast("Đã Gửi Thư", `Chiếc chìa khóa dự phòng đã được gửi tới ${email.trim()}! Cậu nhớ kiểm tra hòm thư nha.`, "success");
+                } else {
+                    throw new Error(data.message || "Không thể gửi email qua máy chủ.");
+                }
             } catch(e) {
-                window.showToast("Lỗi", "Lỗi gửi email đặt lại mật khẩu: " + e.message, "error");
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    window.showToast("Đã Gửi Thư", `Đã gửi thư đặt lại mật khẩu đến hộp thư ${email}!`, "success");
+                } catch(fallbackErr) {
+                    window.showToast("Lỗi", "Lỗi gửi email đặt lại mật khẩu: " + (e.message || fallbackErr.message), "error");
+                }
             }
         };
 

@@ -516,14 +516,29 @@
         window.forgotPassword = async function() {
             const email = await window.mhentPrompt("Đặt Lại Mật Khẩu", "Nhập địa chỉ Email của bạn...");
             if (email && email.includes('@')) {
-                showLoading("Đang gửi thư đặt lại mật khẩu...");
+                showLoading("Đang đúc chìa khóa dự phòng...");
                 try {
-                    await sendPasswordResetEmail(auth, email.trim());
+                    const res = await fetch('https://mhentuniverse.com/api/auth-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email.trim(), type: 'resetPassword' })
+                    });
+                    const data = await res.json();
                     hideLoading();
-                    window.showToast("Đã Gửi Email", `Đã gửi thư hướng dẫn đổi mật khẩu tới ${email}!`, "success");
+                    if (res.ok && data.status === 'success') {
+                        window.showToast("Đã Gửi Thư", `Chiếc chìa khóa dự phòng đã được gửi tới ${email.trim()}! Cậu nhớ kiểm tra hòm thư nha.`, "success");
+                    } else {
+                        throw new Error(data.message || "Không thể gửi email qua máy chủ.");
+                    }
                 } catch(e) {
-                    hideLoading();
-                    window.showToast("Lỗi Gửi Email", e.message || "Không thể gửi email", "error");
+                    try {
+                        await sendPasswordResetEmail(auth, email.trim());
+                        hideLoading();
+                        window.showToast("Đã Gửi Thư", `Đã gửi thư hướng dẫn đổi mật khẩu tới ${email.trim()}!`, "success");
+                    } catch(fallbackErr) {
+                        hideLoading();
+                        window.showToast("Lỗi Gửi Thư", e.message || fallbackErr.message || "Không thể gửi email lúc này", "error");
+                    }
                 }
             }
         };
