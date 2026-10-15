@@ -692,11 +692,13 @@
             const email = (currentUserAuth && currentUserAuth.email) || (currentProfile && currentProfile.email);
             if (!email) return window.showToast("Lỗi", "Không tìm thấy địa chỉ email của tài khoản!", "error");
 
+            const displayName = (currentUserAuth && currentUserAuth.displayName) || (currentProfile && currentProfile.displayName) || '';
+
             try {
                 const res = await fetch('https://www.mhentuniverse.com/api/auth-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email.trim(), type: 'resetPassword' })
+                    body: JSON.stringify({ email: email.trim(), type: 'resetPassword', displayName: displayName })
                 });
                 const data = await res.json();
                 if (res.ok && data.status === 'success') {
