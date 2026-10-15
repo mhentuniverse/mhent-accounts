@@ -28,6 +28,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/js/config.js"></script>
+    <script src="/js/mhent-ui.js"></script>
 
     <style>
         :root {
@@ -643,7 +644,7 @@
         // Lưu tên mới
         document.getElementById('btn-save-name').onclick = async () => {
             const newName = document.getElementById('input-new-name').value.trim();
-            if (!newName) return alert("Vui lòng nhập tên hiển thị!");
+            if (!newName) return window.showToast("Thiếu Thông Tin", "Vui lòng nhập tên hiển thị!", "warning");
 
             try {
                 if (currentUserAuth) {
@@ -657,16 +658,16 @@
                 setSharedCookie(p);
                 renderProfile(p);
                 closeModals();
-                alert("Đã cập nhật tên hiển thị thành công! ✨");
+                window.showToast("Thành Công", "Đã cập nhật tên hiển thị thành công! ✨", "success");
             } catch(e) {
-                alert("Lỗi cập nhật tên: " + e.message);
+                window.showToast("Lỗi", "Lỗi cập nhật tên: " + e.message, "error");
             }
         };
 
         // Lưu avatar mới
         document.getElementById('btn-save-avatar').onclick = async () => {
             const newUrl = document.getElementById('input-avatar-url').value.trim();
-            if (!newUrl) return alert("Vui lòng nhập URL ảnh!");
+            if (!newUrl) return window.showToast("Thiếu Thông Tin", "Vui lòng nhập URL ảnh!", "warning");
 
             try {
                 if (currentUserAuth) {
@@ -680,28 +681,29 @@
                 setSharedCookie(p);
                 renderProfile(p);
                 closeModals();
-                alert("Đã cập nhật ảnh đại diện thành công! ✨");
+                window.showToast("Thành Công", "Đã cập nhật ảnh đại diện thành công! ✨", "success");
             } catch(e) {
-                alert("Lỗi cập nhật ảnh: " + e.message);
+                window.showToast("Lỗi", "Lỗi cập nhật ảnh: " + e.message, "error");
             }
         };
 
         // Gửi email đặt lại mật khẩu
         document.getElementById('btn-send-reset').onclick = async () => {
             const email = (currentUserAuth && currentUserAuth.email) || (currentProfile && currentProfile.email);
-            if (!email) return alert("Không tìm thấy địa chỉ email của tài khoản!");
+            if (!email) return window.showToast("Lỗi", "Không tìm thấy địa chỉ email của tài khoản!", "error");
 
             try {
                 await sendPasswordResetEmail(auth, email);
-                alert(`Đã gửi thư đặt lại mật khẩu đến hộp thư ${email}! Vui lòng kiểm tra email của bạn nha.`);
+                window.showToast("Đã Gửi Thư", `Đã gửi thư đặt lại mật khẩu đến hộp thư ${email}!`, "success");
             } catch(e) {
-                alert("Lỗi gửi email đặt lại mật khẩu: " + e.message);
+                window.showToast("Lỗi", "Lỗi gửi email đặt lại mật khẩu: " + e.message, "error");
             }
         };
 
         // Đăng xuất
         document.getElementById('btn-logout').addEventListener('click', async () => {
-            if (!confirm("Bạn có chắc chắn muốn đăng xuất khỏi Cổng Định Danh MHEnt ID?")) return;
+            const okLogout = await window.mhentConfirm("Đăng Xuất", "Bạn có chắc chắn muốn đăng xuất khỏi Cổng Định Danh MHEnt ID?");
+            if (!okLogout) return;
             try { await signOut(auth); } catch(e) {}
 
             localStorage.removeItem('mhent_user_profile');

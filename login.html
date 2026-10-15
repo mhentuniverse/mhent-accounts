@@ -30,6 +30,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/js/config.js"></script>
+    <script src="/js/mhent-ui.js"></script>
 
     <style>
         :root {
@@ -513,16 +514,16 @@
         };
 
         window.forgotPassword = async function() {
-            const email = prompt("Nhập địa chỉ Email của bạn để nhận liên kết đặt lại mật khẩu:");
+            const email = await window.mhentPrompt("Đặt Lại Mật Khẩu", "Nhập địa chỉ Email của bạn...");
             if (email && email.includes('@')) {
                 showLoading("Đang gửi thư đặt lại mật khẩu...");
                 try {
                     await sendPasswordResetEmail(auth, email.trim());
                     hideLoading();
-                    alert(`Đã gửi thư hướng dẫn đổi mật khẩu tới ${email}! Vui lòng kiểm tra hòm thư.`);
+                    window.showToast("Đã Gửi Email", `Đã gửi thư hướng dẫn đổi mật khẩu tới ${email}!`, "success");
                 } catch(e) {
                     hideLoading();
-                    alert("Lỗi: " + (e.message || "Không thể gửi email"));
+                    window.showToast("Lỗi Gửi Email", e.message || "Không thể gửi email", "error");
                 }
             }
         };
@@ -814,13 +815,13 @@
                         return;
                     } catch(redirErr) {
                         hideLoading();
-                        alert("Không thể chuyển hướng đăng nhập Google!");
+                        window.showToast("Lỗi Đăng Nhập", "Không thể chuyển hướng đăng nhập Google!", "error");
                         return;
                     }
                 }
 
                 hideLoading();
-                alert("Đăng nhập Google thất bại: " + (error.message || error.code));
+                window.showToast("Đăng Nhập Thất Bại", error.message || error.code, "error");
             }
         }
 
@@ -854,7 +855,7 @@
             btnLoginEmail.addEventListener('click', async () => {
                 const email = document.getElementById('login-email').value.trim();
                 const pass = document.getElementById('login-password').value.trim();
-                if (!email || !pass) return alert("Vui lòng điền đủ Email và Mật khẩu!");
+                if (!email || !pass) return window.showToast("Thiếu Thông Tin", "Vui lòng điền đủ Email và Mật khẩu!", "warning");
 
                 showLoading("Đang kiểm tra thông tin...");
                 try {
@@ -862,7 +863,7 @@
                     await handleLoginSuccess(cred.user);
                 } catch(e) {
                     hideLoading();
-                    alert("Sai email hoặc mật khẩu rùi!");
+                    window.showToast("Lỗi Đăng Nhập", "Sai email hoặc mật khẩu rùi!", "error");
                 }
             });
         }
@@ -874,9 +875,9 @@
                 const pass = document.getElementById('reg-password').value.trim();
                 const confirmPass = document.getElementById('reg-confirm-password').value.trim();
 
-                if (!email || !pass || !confirmPass) return alert("Vui lòng điền đủ thông tin!");
-                if (pass.length < 6) return alert("Mật khẩu ít nhất 6 ký tự nha!");
-                if (pass !== confirmPass) return alert("Hai mật khẩu không khớp nhau!");
+                if (!email || !pass || !confirmPass) return window.showToast("Thiếu Thông Tin", "Vui lòng điền đủ thông tin!", "warning");
+                if (pass.length < 6) return window.showToast("Mật Khẩu Ngắn", "Mật khẩu ít nhất 6 ký tự nha!", "warning");
+                if (pass !== confirmPass) return window.showToast("Không Khớp", "Hai mật khẩu không khớp nhau!", "warning");
 
                 showLoading("Đang tạo tài khoản MHEnt ID mới...");
                 try {
@@ -884,7 +885,7 @@
                     await handleLoginSuccess(cred.user);
                 } catch(e) {
                     hideLoading();
-                    alert("Lỗi tạo tài khoản: " + (e.message || "Không thành công"));
+                    window.showToast("Lỗi Đăng Ký", e.message || "Không thành công", "error");
                 }
             });
         }
