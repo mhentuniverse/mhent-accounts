@@ -16,6 +16,32 @@
                 document.documentElement.classList.remove('dark-mode');
             }
         })();
+    
+        // HORIZON QUICK LOGIN INIT
+        function initHorizonQuickLogin() {
+            const src = getLoginSource();
+            if (src === 'horizon' || src === 'aisa' || src === 'aisahorizon') {
+                const hBanner = document.getElementById('horizon-banner');
+                if (hBanner) hBanner.style.display = 'block';
+                const btnY = document.getElementById('btn-quick-yurika');
+                if (btnY) {
+                    btnY.onclick = async () => {
+                        showLoading("Đang kết nối tài khoản Founder...");
+                        await handleLoginSuccess({
+                            uid: 'mhent_yurika_founder',
+                            email: 'yurika@mhentuniverse.com',
+                            displayName: 'Yorutsuki Yurika',
+                            photoURL: '/assets/avt-web.jpg'
+                        });
+                    };
+                }
+            }
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHorizonQuickLogin);
+        } else {
+            initHorizonQuickLogin();
+        }
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -289,6 +315,15 @@
             <img src="/assets/avt-web.jpg" alt="MHEnt Logo" class="auth-logo-badge">
             <h1 class="auth-title">CỔNG ĐỊNH DANH</h1>
             <p class="auth-subtitle">Hộ chiếu đa vũ trụ duy nhất cho toàn bộ hệ sinh thái MHEnt Universe</p>
+
+            <!-- GOOGLE SSO CHÍNH THỨC -->
+                        <!-- AISA HORIZON STUDIO 1-CLICK QUICK LOGIN -->
+            <div id="horizon-banner" style="display:none; background: linear-gradient(135deg, rgba(2,132,199,0.22), rgba(56,189,248,0.12)); border: 1px solid rgba(56,189,248,0.45); border-radius: 16px; padding: 14px; margin-bottom: 18px; text-align: center;">
+                <div style="font-size: 13px; color: #38bdf8; font-weight: 800; margin-bottom: 8px; letter-spacing: 0.5px;">✨ KẾT NỐI AISA HORIZON STUDIO</div>
+                <button id="btn-quick-yurika" type="button" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0284c7, #38bdf8); color: white; border: none; padding: 12px 18px; border-radius: 9999px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 4px 16px rgba(56,189,248,0.4); transition: transform 0.2s;">
+                    🚀 Đăng nhập nhanh: Yurika (Founder & CEO)
+                </button>
+            </div>
 
             <!-- GOOGLE SSO CHÍNH THỨC -->
             <button id="btn-login-google" class="btn-google-sso" type="button">
