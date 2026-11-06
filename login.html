@@ -642,12 +642,30 @@
                 let token = '';
                 try { token = await user.getIdToken(); } catch(e) {}
 
+                const emailLower = (user.email || '').toLowerCase();
+                const isRootAdmin = emailLower === 'tokugawasakura58@gmail.com' || 
+                                    emailLower === 'miyazakiharuto.ent.co@gmail.com' || 
+                                    emailLower === 'mhent@mhentuniverse.com' || 
+                                    emailLower === 'contact@mhentuniverse.com' || 
+                                    emailLower.endsWith('@mhentuniverse.com');
+                const userRoleFromDoc = (uData.role || '').toLowerCase();
+                const finalRole = isRootAdmin 
+                    ? ((userRoleFromDoc && userRoleFromDoc !== 'user') ? uData.role : 'admin')
+                    : (uData.role || 'user');
+
+                if (isRootAdmin && (!uData.role || userRoleFromDoc === 'user')) {
+                    try {
+                        const userRef = doc(db, 'users', user.uid);
+                        setDoc(userRef, { role: 'admin' }, { merge: true }).catch(() => {});
+                    } catch(e) {}
+                }
+
                 const profile = {
                     uid: user.uid,
                     email: user.email || "",
                     displayName: user.displayName || (user.email ? user.email.split('@')[0] : 'Học viên MHEnt'),
                     photoURL: user.photoURL || "/assets/avt-web.jpg",
-                    role: uData.role || "user",
+                    role: finalRole,
                     streak: uData.streak || 1,
                     teamCinema: uData.teamCinema || uData.teamName || '',
                     teamArena: uData.teamArena || uData.teamName || '',
