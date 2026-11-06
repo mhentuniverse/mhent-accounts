@@ -19,7 +19,7 @@
     
         // HORIZON QUICK LOGIN INIT
         function initHorizonQuickLogin() {
-            const src = getLoginSource();
+            const src = new URLSearchParams(window.location.search).get('source');
             if (src === 'horizon' || src === 'aisa' || src === 'aisahorizon') {
                 const hBanner = document.getElementById('horizon-banner');
                 if (hBanner) hBanner.style.display = 'block';
@@ -435,39 +435,65 @@
         const paramPlatform = urlParams.get('platform');
         const paramRedirect = urlParams.get('redirect');
 
+        function setPendingRedirect() {
+            try { sessionStorage.setItem('mhent_auth_pending_redirect', 'true'); } catch(e) {}
+            try { localStorage.setItem('mhent_auth_pending_redirect', 'true'); } catch(e) {}
+        }
+
+        function isPendingRedirect() {
+            return sessionStorage.getItem('mhent_auth_pending_redirect') === 'true' || 
+                   localStorage.getItem('mhent_auth_pending_redirect') === 'true';
+        }
+
         if (paramSource) {
             try {
                 sessionStorage.setItem('mhent_login_source', paramSource);
-                localStorage.setItem('mhent_login_source', paramSource);
+            } catch(e) {}
+        } else if (!isPendingRedirect()) {
+            try {
+                sessionStorage.removeItem('mhent_login_source');
+                localStorage.removeItem('mhent_login_source');
             } catch(e) {}
         }
+
         if (paramPlatform) {
             try {
                 sessionStorage.setItem('mhent_login_platform', paramPlatform);
-                localStorage.setItem('mhent_login_platform', paramPlatform);
+            } catch(e) {}
+        } else if (!isPendingRedirect()) {
+            try {
+                sessionStorage.removeItem('mhent_login_platform');
+                localStorage.removeItem('mhent_login_platform');
             } catch(e) {}
         }
+
         if (paramRedirect) {
             try {
                 sessionStorage.setItem('mhent_login_redirect', paramRedirect);
-                localStorage.setItem('mhent_login_redirect', paramRedirect);
             } catch(e) {}
         }
 
         function getLoginSource() {
-            return new URLSearchParams(window.location.search).get('source') || 
-                   sessionStorage.getItem('mhent_login_source') || 
-                   localStorage.getItem('mhent_login_source') || '';
+            const urlSrc = new URLSearchParams(window.location.search).get('source');
+            if (urlSrc) return urlSrc;
+            if (isPendingRedirect()) {
+                return sessionStorage.getItem('mhent_login_source') || '';
+            }
+            return '';
         }
+
         function getLoginPlatform() {
-            return new URLSearchParams(window.location.search).get('platform') || 
-                   sessionStorage.getItem('mhent_login_platform') || 
-                   localStorage.getItem('mhent_login_platform') || '';
+            const urlPlat = new URLSearchParams(window.location.search).get('platform');
+            if (urlPlat) return urlPlat;
+            if (isPendingRedirect()) {
+                return sessionStorage.getItem('mhent_login_platform') || '';
+            }
+            return '';
         }
+
         function getLoginRedirect() {
             return new URLSearchParams(window.location.search).get('redirect') || 
-                   sessionStorage.getItem('mhent_login_redirect') || 
-                   localStorage.getItem('mhent_login_redirect') || '';
+                   sessionStorage.getItem('mhent_login_redirect') || '';
         }
 
         function clearLoginSession() {
@@ -480,16 +506,6 @@
             try { sessionStorage.removeItem('mhent_auth_pending_redirect'); } catch(e) {}
             try { localStorage.removeItem('mhent_auth_pending_redirect'); } catch(e) {}
             try { sessionStorage.removeItem('mhent_auto_google_done'); } catch(e) {}
-        }
-
-        function setPendingRedirect() {
-            try { sessionStorage.setItem('mhent_auth_pending_redirect', 'true'); } catch(e) {}
-            try { localStorage.setItem('mhent_auth_pending_redirect', 'true'); } catch(e) {}
-        }
-
-        function isPendingRedirect() {
-            return sessionStorage.getItem('mhent_auth_pending_redirect') === 'true' || 
-                   localStorage.getItem('mhent_auth_pending_redirect') === 'true';
         }
 
         function isMobileOrApp() {
@@ -660,6 +676,19 @@
                     console.warn("[MHEnt SSO] Lỗi lưu cookie:", cErr);
                 }
 
+                // 🌐 NẾU CÓ REDIRECT VỀ WEB VÀ KHÔNG CHỈ ĐỊNH SOURCE APP CỤ THỂ
+                const hasExplicitAppSource = ['mhentstudy', 'study', 'horizon', 'aisa', 'aisahorizon', 'aurora', 'app'].includes(source);
+                const isDirectWebRedirect = redirectParam && (!paramSource || paramSource === 'web');
+
+                if (isDirectWebRedirect || !hasExplicitAppSource) {
+                    clearLoginSession();
+                    const safeDest = getSafeRedirectUrl(redirectParam) || getSafeRedirectUrl(document.referrer) || '/profile';
+                    setTimeout(() => {
+                        window.location.href = safeDest;
+                    }, 600);
+                    return;
+                }
+
                 // 🎓 TRƯỜNG HỢP 1: TỪ MHENT STUDY (WEB HOẶC APP APK)
                 if (source === 'mhentstudy' || source === 'study') {
                     clearLoginSession();
@@ -788,6 +817,47 @@
                     return;
                 }
 
+                // 🌐 TRƯỜNG HỢP: TỪ TRÌNH DUYỆT MHENT AURORA
+                if (source === 'aurora') {
+                    clearLoginSession();
+                    const emailParam = encodeURIComponent(user.email || '');
+                    const nameParam = encodeURIComponent(profile.displayName || 'MHEnt Member');
+                    const photoParam = encodeURIComponent(profile.photoURL || '');
+
+                    if (window.chrome && window.chrome.webview) {
+                        try {
+                            window.chrome.webview.postMessage({
+                                action: 'authSuccess',
+                                uid: user.uid,
+                                email: user.email,
+                                name: profile.displayName || user.displayName || 'MHEnt Member',
+                                photo: profile.photoURL || user.photoURL || '',
+                                token: token
+                            });
+                        } catch(e) {}
+                    }
+
+                    let auroraRedirect = redirectParam || 'https://aurora.portal/signin.html';
+                    const redirectGlue = auroraRedirect.includes('?') ? '&' : '?';
+                    const fullRedirect = `${auroraRedirect}${redirectGlue}uid=${user.uid}&email=${emailParam}&name=${nameParam}&photo=${photoParam}&token=${token}&provider=PortalSSO`;
+
+                    document.body.innerHTML = `
+                        <div style="display:flex; justify-content:center; align-items:center; min-height:100vh; background:#070913; color:#f1f5f9; font-family:Nunito, sans-serif; text-align:center; flex-direction:column; padding:24px; box-sizing:border-box;">
+                            <div style="width: 76px; height: 76px; border-radius: 50%; background: rgba(0, 240, 255, 0.15); display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 20px; border: 2px solid #00f0ff; box-shadow: 0 0 25px rgba(0, 240, 255, 0.4);">🌌</div>
+                            <h1 style="margin: 0 0 10px 0; font-size: 26px; font-weight: 800; color: #00f0ff;">Đăng Nhập Thành Công!</h1>
+                            <p style="font-size: 15px; color: #94a3b8; max-width: 440px; line-height: 1.6; margin-bottom: 25px;">Hồ sơ <strong>${profile.displayName}</strong> (${user.email}) đã đồng bộ hóa thành công vào <strong>MHEnt. Aurora</strong>.</p>
+                            <a href="${fullRedirect}" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #00f0ff, #3b82f6); color: #070913; padding: 12px 28px; border-radius: 9999px; font-weight: 800; text-decoration: none; box-shadow: 0 4px 18px rgba(0, 240, 255, 0.4); font-size: 15px;">
+                                🚀 Trở về MHEnt. Aurora
+                            </a>
+                            <p style="opacity: 0.6; font-size: 13px; margin-top: 20px;">Trình duyệt đã cập nhật avatar và thanh công cụ tức thì.</p>
+                        </div>
+                    `;
+                    setTimeout(() => {
+                        window.location.href = fullRedirect;
+                    }, 1200);
+                    return;
+                }
+
                 // 📱 TRƯỜNG HỢP 2: TỪ APP MHENT UNIVERSE
                 if (source === 'app') {
                     clearLoginSession();
@@ -865,7 +935,7 @@
                 const source = getLoginSource();
                 const pending = isPendingRedirect();
                 const redirectParam = getLoginRedirect();
-                if (pending || source === 'mhentstudy' || source === 'study' || source === 'app' || redirectParam) {
+                if (pending || source === 'mhentstudy' || source === 'study' || source === 'app' || source === 'aurora' || redirectParam) {
                     await handleLoginSuccess(user);
                 }
             }
