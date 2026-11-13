@@ -872,6 +872,26 @@
                     localStorage.setItem('mhent_user_profile', JSON.stringify(updated));
                     setSharedCookie(updated);
 
+                    // Tự động đồng bộ với MHEnt. Link Desktop nếu đang mở trên máy tính
+                    try {
+                        const linkPayload = encodeURIComponent(JSON.stringify({
+                            uid: updated.uid,
+                            email: updated.email,
+                            displayName: updated.displayName,
+                            photoURL: updated.photoURL,
+                            role: updated.role,
+                            discord: updated.discord
+                        }));
+                        fetch(`http://127.0.0.1:14128/auth-callback?profile=${linkPayload}`, {
+                            method: 'GET',
+                            mode: 'no-cors'
+                        }).then(() => {
+                            if (window.location.search.includes('action=sync-desktop')) {
+                                if (window.showToast) window.showToast("Đồng Bộ Hoàn Tất", "Đã liên kết danh tính MHEnt ID với MHEnt. Link trên máy tính!", "success");
+                            }
+                        }).catch(() => {});
+                    } catch (e) {}
+
                     // Kiểm tra token Discord đang chờ xử lý sau khi redirect
                     const pendingDiscordToken = sessionStorage.getItem('mhent_pending_discord_token');
                     if (pendingDiscordToken) {
