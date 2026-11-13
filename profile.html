@@ -382,6 +382,163 @@
             cursor: pointer;
             font-family: 'Nunito', sans-serif;
         }
+        /* KHỐI LIÊN KẾT DISCORD */
+        .discord-section-card {
+            border-color: rgba(88, 101, 242, 0.3);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(20, 24, 55, 0.8) 100%);
+            box-shadow: 0 15px 35px rgba(88, 101, 242, 0.1);
+        }
+        .discord-box {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .discord-intro {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .discord-icon-glow {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(88, 101, 242, 0.15);
+            border: 1px solid rgba(88, 101, 242, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: #5865F2;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.25);
+        }
+        .btn-discord-connect {
+            padding: 12px 24px;
+            border-radius: 14px;
+            background: #5865F2;
+            color: #fff;
+            border: none;
+            font-size: 14.5px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4);
+            align-self: flex-start;
+        }
+        .btn-discord-connect:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.55);
+        }
+        .discord-profile-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(88, 101, 242, 0.25);
+        }
+        .discord-avatar-wrap {
+            position: relative;
+            width: 54px;
+            height: 54px;
+            flex-shrink: 0;
+        }
+        .discord-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #5865F2;
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.35);
+        }
+        .discord-online-dot {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #23a55a;
+            border: 2px solid #0f172a;
+        }
+        .discord-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .discord-user-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .discord-display-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .pill-badge-discord {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            background: rgba(88, 101, 242, 0.2);
+            color: #7983f5;
+            border: 1px solid rgba(88, 101, 242, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .discord-username-tag {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .discord-id-tag {
+            font-size: 11.5px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        .discord-footer-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 4px;
+        }
+        .discord-sync-badge {
+            font-size: 12.5px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-discord-unlink {
+            padding: 6px 14px;
+            border-radius: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-discord-unlink:hover {
+            background: #ef4444;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -465,7 +622,56 @@
             </div>
         </div>
 
-        <!-- KHỐI 3: BẢO MẬT & ĐỔI MẬT KHẨU -->
+        <!-- KHỐI 3: LIÊN KẾT TÀI KHOẢN DISCORD -->
+        <div class="section-card discord-section-card" id="card-discord">
+            <h2 class="section-title" style="color: #7289da;"><i class="fa-brands fa-discord"></i> Kết Nối Tài Khoản Discord</h2>
+            
+            <!-- Trạng thái chưa kết nối -->
+            <div id="discord-unlinked" class="discord-box">
+                <div class="discord-intro">
+                    <div class="discord-icon-glow">
+                        <i class="fa-brands fa-discord"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 15px; color: #fff;">Đồng Bộ Trực Tiếp Với Discord</div>
+                        <div style="font-size: 13.5px; color: #94a3b8; margin-top: 4px; line-height: 1.5;">
+                            Liên kết tài khoản Discord của bạn để tự động hiển thị trạng thái học từ vựng và nghe nhạc (Rich Presence) trên Discord cá nhân, mở khóa đặc quyền sinh viên tại MHEnt Universe.
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-discord-connect" id="btn-discord-connect">
+                    <i class="fa-brands fa-discord"></i> Kết Nối Với Discord
+                </button>
+            </div>
+
+            <!-- Trạng thái đã kết nối -->
+            <div id="discord-linked" class="discord-box" style="display: none;">
+                <div class="discord-profile-row">
+                    <div class="discord-avatar-wrap">
+                        <img id="discord-user-avatar" src="/assets/avt-web.jpg" alt="Discord Avatar" class="discord-avatar">
+                        <span class="discord-online-dot"></span>
+                    </div>
+                    <div class="discord-user-info">
+                        <div class="discord-user-name-row">
+                            <span id="discord-global-name" class="discord-display-name">...</span>
+                            <span class="pill-badge-discord"><i class="fa-solid fa-circle-check"></i> Đã Liên Kết</span>
+                        </div>
+                        <div id="discord-username" class="discord-username-tag">@username</div>
+                        <div class="discord-id-tag">Discord ID: <span id="discord-val-id" style="font-family: monospace;">...</span></div>
+                    </div>
+                </div>
+                <div class="discord-footer-actions">
+                    <div class="discord-sync-badge">
+                        <i class="fa-solid fa-bolt" style="color: #38bdf8;"></i> Sẵn sàng Rich Presence trên Study Hub
+                    </div>
+                    <button type="button" class="btn-discord-unlink" id="btn-discord-unlink">
+                        <i class="fa-solid fa-unlink"></i> Hủy liên kết
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KHỐI 4: BẢO MẬT & ĐỔI MẬT KHẨU -->
         <div class="section-card">
             <h2 class="section-title"><i class="fa-solid fa-lock"></i> Bảo Mật & Mật Khẩu</h2>
             <div class="info-row">
@@ -525,6 +731,28 @@
         } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+        // ==========================================
+        // 0. XỬ LÝ DISCORD OAUTH2 CALLBACK TỪ URL HASH
+        // ==========================================
+        const rawHash = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : '';
+        if (rawHash) {
+            const hashParams = new URLSearchParams(rawHash);
+            const token = hashParams.get('access_token');
+            const returnedError = hashParams.get('error_description') || hashParams.get('error');
+
+            // Xóa ngay token khỏi URL thanh địa chỉ để bảo mật
+            history.replaceState(null, '', window.location.pathname + window.location.search);
+
+            if (returnedError) {
+                setTimeout(() => {
+                    const msg = decodeURIComponent(returnedError).replace(/\+/g, ' ');
+                    if (window.showToast) window.showToast("Kết Nối Bị Hủy", msg, "warning");
+                }, 600);
+            } else if (token) {
+                sessionStorage.setItem('mhent_pending_discord_token', token);
+            }
+        }
+
         const app = !getApps().length ? initializeApp(window.firebaseConfig) : getApp();
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -543,6 +771,28 @@
                 document.cookie = `mhent_auth_session=${cookieVal}; domain=.mhentuniverse.com; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
                 document.cookie = `mhent_auth_session=${cookieVal}; path=/; max-age=2592000; SameSite=Lax${secureFlag}`;
             } catch(e) {}
+        }
+
+        function renderDiscordStatus(discordData) {
+            const unlinkedEl = document.getElementById('discord-unlinked');
+            const linkedEl = document.getElementById('discord-linked');
+            if (!discordData || !discordData.id) {
+                if (unlinkedEl) unlinkedEl.style.display = 'flex';
+                if (linkedEl) linkedEl.style.display = 'none';
+                return;
+            }
+            if (unlinkedEl) unlinkedEl.style.display = 'none';
+            if (linkedEl) linkedEl.style.display = 'flex';
+
+            const avtEl = document.getElementById('discord-user-avatar');
+            const gNameEl = document.getElementById('discord-global-name');
+            const uNameEl = document.getElementById('discord-username');
+            const idEl = document.getElementById('discord-val-id');
+
+            if (avtEl) avtEl.src = discordData.avatarUrl || '/assets/avt-web.jpg';
+            if (gNameEl) gNameEl.textContent = discordData.globalName || discordData.username;
+            if (uNameEl) uNameEl.textContent = '@' + discordData.username;
+            if (idEl) idEl.textContent = discordData.id;
         }
 
         function renderProfile(userObj) {
@@ -569,6 +819,10 @@
                 const roleUpper = userObj.role.toUpperCase();
                 roleEl.innerHTML = `<i class="fa-solid fa-shield"></i> ${roleUpper === 'ADMIN' ? 'Quản Trị Viên' : 'Thành viên MHEnt'}`;
             }
+
+            if (userObj.discord) {
+                renderDiscordStatus(userObj.discord);
+            }
         }
 
         // Khôi phục từ Cookie hoặc LocalStorage
@@ -584,6 +838,9 @@
 
         if (currentProfile) {
             renderProfile(currentProfile);
+            if (currentProfile.discord) {
+                renderDiscordStatus(currentProfile.discord);
+            }
         }
 
         // Lắng nghe Firebase Auth
@@ -602,6 +859,7 @@
                         photoURL: user.photoURL || data.photoURL || '/assets/avt-web.jpg',
                         role: data.role || 'user',
                         provider: providerId.includes('google') ? 'Google Account' : 'Email & Mật khẩu',
+                        discord: data.discord || null,
                         teamCinema: data.teamCinema || data.teamName || '',
                         teamArena: data.teamArena || data.teamName || '',
                         teamManga: data.teamManga || data.teamName || '',
@@ -610,9 +868,53 @@
                         teamEdu: data.teamEdu || data.teamTeach || data.teamName || ''
                     };
                     renderProfile(updated);
+                    renderDiscordStatus(updated.discord);
                     localStorage.setItem('mhent_user_profile', JSON.stringify(updated));
                     setSharedCookie(updated);
-                } catch(e) {}
+
+                    // Kiểm tra token Discord đang chờ xử lý sau khi redirect
+                    const pendingDiscordToken = sessionStorage.getItem('mhent_pending_discord_token');
+                    if (pendingDiscordToken) {
+                        sessionStorage.removeItem('mhent_pending_discord_token');
+                        if (window.showToast) window.showToast("Đang Xác Thực", "Đang kết nối danh tính từ Discord...", "info");
+                        try {
+                            const discordRes = await fetch('https://discord.com/api/v10/users/@me', {
+                                headers: {
+                                    'Authorization': `Bearer ${pendingDiscordToken}`
+                                }
+                            });
+                            if (discordRes.ok) {
+                                const discordUser = await discordRes.json();
+                                const avatarUrl = discordUser.avatar
+                                    ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.${discordUser.avatar.startsWith('a_') ? 'gif' : 'png'}?size=128`
+                                    : `https://cdn.discordapp.com/embed/avatars/${(parseInt(discordUser.id) >> 22) % 6}.png`;
+
+                                const discordData = {
+                                    id: discordUser.id,
+                                    username: discordUser.username,
+                                    globalName: discordUser.global_name || discordUser.username,
+                                    avatar: discordUser.avatar,
+                                    avatarUrl: avatarUrl,
+                                    linkedAt: new Date().toISOString()
+                                };
+
+                                await setDoc(doc(db, "users", user.uid), { discord: discordData }, { merge: true });
+                                updated.discord = discordData;
+                                localStorage.setItem('mhent_user_profile', JSON.stringify(updated));
+                                setSharedCookie(updated);
+                                renderDiscordStatus(discordData);
+                                if (window.showToast) window.showToast("Thành Công", `Đã liên kết tài khoản Discord (${discordData.globalName || discordData.username})! ✨`, "success");
+                            } else {
+                                throw new Error("Mã xác thực Discord không hợp lệ hoặc đã hết hạn.");
+                            }
+                        } catch(discErr) {
+                            console.error("[Discord OAuth2]", discErr);
+                            if (window.showToast) window.showToast("Lỗi Kết Nối", "Không thể liên kết Discord: " + discErr.message, "error");
+                        }
+                    }
+                } catch(e) {
+                    console.error("[Auth Error]", e);
+                }
             } else if (!currentProfile) {
                 window.location.replace('/login');
             }
@@ -715,6 +1017,49 @@
                 }
             }
         };
+
+        // ==========================================
+        // LIÊN KẾT / HỦY LIÊN KẾT TÀI KHOẢN DISCORD
+        // ==========================================
+        const btnDiscordConnect = document.getElementById('btn-discord-connect');
+        if (btnDiscordConnect) {
+            btnDiscordConnect.onclick = () => {
+                const DISCORD_CLIENT_ID = '1570699759319126037';
+                const redirectUri = encodeURIComponent(`${window.location.origin}/profile`);
+                const state = Math.random().toString(36).substring(2, 15);
+                sessionStorage.setItem('mhent_discord_oauth_state', state);
+                const authUrl = `https://discord.com/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=identify&state=${state}`;
+                window.location.href = authUrl;
+            };
+        }
+
+        const btnDiscordUnlink = document.getElementById('btn-discord-unlink');
+        if (btnDiscordUnlink) {
+            btnDiscordUnlink.onclick = async () => {
+                let ok = true;
+                if (window.mhentConfirm) {
+                    ok = await window.mhentConfirm("Hủy Liên Kết Discord", "Bạn có chắc chắn muốn ngắt liên kết tài khoản Discord khỏi hồ sơ MHEnt ID?");
+                } else {
+                    ok = confirm("Bạn có chắc chắn muốn ngắt liên kết tài khoản Discord khỏi hồ sơ MHEnt ID?");
+                }
+                if (!ok) return;
+
+                try {
+                    if (currentUserAuth) {
+                        await setDoc(doc(db, "users", currentUserAuth.uid), { discord: null }, { merge: true });
+                    }
+                    let p = JSON.parse(localStorage.getItem('mhent_user_profile') || '{}');
+                    delete p.discord;
+                    localStorage.setItem('mhent_user_profile', JSON.stringify(p));
+                    setSharedCookie(p);
+                    renderDiscordStatus(null);
+                    if (window.showToast) window.showToast("Đã Hủy Liên Kết", "Đã ngắt liên kết tài khoản Discord thành công.", "success");
+                } catch(e) {
+                    console.error("[Discord Unlink]", e);
+                    if (window.showToast) window.showToast("Lỗi", "Không thể hủy liên kết: " + e.message, "error");
+                }
+            };
+        }
 
         // Đăng xuất
         document.getElementById('btn-logout').addEventListener('click', async () => {
