@@ -948,8 +948,25 @@
 
         checkRedirectAuthResult();
 
+        const loginUrlParams = new URLSearchParams(window.location.search);
+        const isForceSelectAccount = loginUrlParams.get('prompt') === 'select_account' || loginUrlParams.get('switch') === 'true' || loginUrlParams.get('action') === 'switch';
+
+        if (isForceSelectAccount) {
+            console.log('[MHEnt SSO] Yêu cầu chuyển/đổi tài khoản khác -> Xóa phiên lưu trữ cũ');
+            signOut(auth).catch(() => {});
+            try {
+                localStorage.removeItem('mhent_user_profile');
+                localStorage.removeItem('mhent_user_role');
+                localStorage.removeItem('mhent_app_token');
+            } catch(e) {}
+        }
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                if (isForceSelectAccount) {
+                    console.log('[MHEnt SSO] Đang ở chế độ chọn tài khoản khác, chờ người dùng đăng nhập mới.');
+                    return;
+                }
                 const source = getLoginSource();
                 const pending = isPendingRedirect();
                 const redirectParam = getLoginRedirect();
